@@ -37,8 +37,11 @@ public interface PropertyResolver {
 ```
 # 常用实现类
 StandardEnvironment:对应非servlet应用（新的webflux模块也是web，其environment的实现也是这个）
-StandardServletEnvironment：对应servlet应用（spring5之前就是web应用），其继承结构如下：
-![StandardServletEnvironment的继承结构](https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTgwMzAyMjIwODI3NzUy?x-oss-process=image/format,png)
+StandardServletEnvironment：对应servlet应用（spring5之前就是web应用）
+
+StandardReactiveWebEnvironment:当使用web-reactive模块时，用的是这个实现（其实这个就是单纯继承了StandardEnvironment，并没有啥不一样，可能作者是留作以后扩展）
+
+<img src="/Users/didi/workspace/study/my-note/pic/StandardServletEnvironment.png" alt="StandardServletEnvironment" style="zoom:50%;" />
 
 # 实现原理
 关于profiles相关功能的实现其实很好理解，用一个Set保存所有active的profile就行了。
