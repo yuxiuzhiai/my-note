@@ -132,7 +132,7 @@ public final HandlerExecutionChain getHandler(HttpServletRequest request) throws
 
 类图如下
 
-<img src="/RequestMappingHandlerMapping.png" alt="RequestMappingHandlerMapping" style="zoom:80%;" />
+<img src="pic/RequestMappingHandlerMapping.png" alt="RequestMappingHandlerMapping" style="zoom:80%;" />
 
 从使用的角度来看，我们要将一个请求映射到一个处理器，有这几个办法：
 
