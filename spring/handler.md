@@ -8,9 +8,10 @@ handler个几种类型
 
 * HandlerMethod：基于@Controller和@RequestMapping注解生成的handler是这种类型
 * HttpRequestHandler：如果handler是HttpRequestHandler就用这个
-* RequestMappingHandlerAdapter：如果handler是一个HandlerMethod就用这个
-* SimpleControllerHandlerAdapter：如果handler是Controller(是类，不是@Controller注解)就用这个(这个应该已经弃用了，我看了spring的代码Annotate，Controller相关的是2008年写的。。。)
-* SimpleServletHandlerAdapter：如果handler是一个javax.servlet.Servlet,那就用这个
+* Controller：
+* Servlet:直接通过Servlet来处理
+
+
 
 ## 实现
 
