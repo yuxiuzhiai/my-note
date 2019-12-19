@@ -228,6 +228,6 @@ private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate deleg
 
 # 结语
 
-在spring中，在家xml文件，着实是非常复杂了。。。
+在spring中，加载xml文件，着实是非常复杂了。。。
 
 (水平有限，最近在看spring源码，分享学习过程，希望对各位有点微小的帮助。如有错误，请指正~)
