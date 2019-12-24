@@ -1,6 +1,6 @@
 # 概念
 
-
+我们知道，spring的核心功能有两个，一个是DI或者说是IoC，一个是aop。而依赖注入的实现，即是靠BeanFactory。BeanFactory是所有bean的容器，但是，我们在使用spring时，除了需要这个，还需要一些别的功能，比如事件机制，国际化机制等等。ApplicationContext就是一个集大成的接口，基本就是大多数spring功能接口。
 
 # 用法
 
@@ -53,39 +53,27 @@ public class MyConfig {
 public void refresh() throws BeansException, IllegalStateException {
   //1.准备
   prepareRefresh();
-
   //2.新建BeanFactory
   ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
-
   //3.配置BeanFactory
   prepareBeanFactory(beanFactory);
-
-
-  // Allows post-processing of the bean factory in context subclasses.
+  //4.BeanFactory的后处理
   postProcessBeanFactory(beanFactory);
-
-  // Invoke factory processors registered as beans in the context.
+  //5.执行BeanFactoryPostProcessor
   invokeBeanFactoryPostProcessors(beanFactory);
-
-  // Register bean processors that intercept bean creation.
+  //6.注册BeanPostProcessor
   registerBeanPostProcessors(beanFactory);
-
-  // Initialize message source for this context.
+  //7.构建MessageSource
   initMessageSource();
-
-  // Initialize event multicaster for this context.
+  //8.构建事件传播器
   initApplicationEventMulticaster();
-
-  // Initialize other special beans in specific context subclasses.
+  //9.构建一些特定ApplicationContext中特定的bean
   onRefresh();
-
-  // Check for listener beans and register them.
+  //10.注册事件监听器
   registerListeners();
-
-  // Instantiate all remaining (non-lazy-init) singletons.
+  //11.实例化剩下的非lazy singleton bean
   finishBeanFactoryInitialization(beanFactory);
-
-  // Last step: publish corresponding event.
+  //12.进行一些收尾工作
   finishRefresh();
 }
 ```
@@ -98,10 +86,8 @@ public void refresh() throws BeansException, IllegalStateException {
 
 ```java
 protected void prepareRefresh() {
-
   //1.1.添加一些自己的PropertySource
   initPropertySources();
-
   //1.2.验证必须属性
   getEnvironment().validateRequiredProperties();
 }
@@ -166,7 +152,6 @@ protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
   beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
   //PropertyEditor相关
   beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
-
   // Configure the bean factory with context callbacks.
   beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
   beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
@@ -210,10 +195,58 @@ blabla
 
 ## 4.BeanFactory的后处理
 
+## 5.执行BeanFactoryPostProcessor
 
+## 6.注册BeanPostProcessor
+
+## 7.构建MessageSource
+
+关于MessageSource的解释请见：https://blog.csdn.net/yuxiuzhiai/article/details/103656202
+
+spring构建MessageSource的过程：
+
+```java
+protected void initMessageSource() {
+  ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+  //是否存在name为messageSource的bean
+  if (beanFactory.containsLocalBean(MESSAGE_SOURCE_BEAN_NAME)) {
+    this.messageSource = beanFactory.getBean(MESSAGE_SOURCE_BEAN_NAME, MessageSource.class);
+    // 设置父MessageSource
+    if (this.parent != null && this.messageSource instanceof HierarchicalMessageSource) {
+      HierarchicalMessageSource hms = (HierarchicalMessageSource) this.messageSource;
+      if (hms.getParentMessageSource() == null) {
+        hms.setParentMessageSource(getInternalParentMessageSource());
+      }
+    }
+  }
+  else {
+    //如果没有messageSource，就整一个DelegationgMessageSource,同样设置父messageSource
+    DelegatingMessageSource dms = new DelegatingMessageSource();
+    dms.setParentMessageSource(getInternalParentMessageSource());
+    this.messageSource = dms;
+    beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
+  }
+}
+```
+
+## 8.构建事件传播器
+
+## 9.构建一些特定ApplicationContext子类的特殊bean
+
+比如web相关的ApplicationContext会在这一步构建一个ThemeSource，创建web服务器
+
+## 12.收尾工作
+
+* 清理各种缓存
+* 构建LifecycleProcessor
+* 调用LifecycleProcessor的refresh()方法
+* 发布一个ContextRefreshedEvent事件
+* 注册LiveBeansView
+
+如果是web相关的ServletWebServerApplicationContext，在这一步还会启动web服务器
 
 # 结语
 
-在spring中，spring.factories文件是很重要的。所以虽然很简单，但肯定要知道
+ApplicationContext的启动是一个十分核心的过程，基本spring的所有功能都是在这个期间完成。
 
 (水平有限，最近在看spring源码，分享学习过程，希望对各位有点微小的帮助。如有错误，请指正~)
