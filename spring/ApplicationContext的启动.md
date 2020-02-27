@@ -86,10 +86,16 @@ public void refresh() throws BeansException, IllegalStateException {
 
 ```java
 protected void prepareRefresh() {
+  //设置属性，标识正在启动
+  this.startupDate = System.currentTimeMillis();
+  this.closed.set(false);
+  this.active.set(true);
   //1.1.添加一些自己的PropertySource
   initPropertySources();
   //1.2.验证必须属性
   getEnvironment().validateRequiredProperties();
+  //earlyApplicationListener的处理
+  ...
 }
 ```
 

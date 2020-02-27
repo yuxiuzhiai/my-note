@@ -8,7 +8,7 @@ spring解析xml配置文件是一件十分复杂的事情，而解析bean标签�
 
 ```java
 protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
-  ////@1.关键方法，将Element解析成BeanDefinitionHolder
+  //@1.关键方法，将Element解析成BeanDefinitionHolder
   BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
   if (bdHolder != null) {
     //@2.处理自定义的子元素标签
@@ -44,16 +44,10 @@ public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable Be
     String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);
     aliases.addAll(Arrays.asList(nameArr));
   }
-
   String beanName = id;
   if (!StringUtils.hasText(beanName) && !aliases.isEmpty()) {
     beanName = aliases.remove(0);
-    if (logger.isTraceEnabled()) {
-      logger.trace("No XML 'id' specified - using '" + beanName +
-                   "' as bean name and " + aliases + " as aliases");
-    }
   }
-
   if (containingBean == null) {
     checkNameUniqueness(beanName, aliases, ele);
   }
@@ -61,7 +55,6 @@ public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable Be
   AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);//@1.1
   if (beanDefinition != null) {
     if (!StringUtils.hasText(beanName)) {
-      try {
         if (containingBean != null) {
           beanName = BeanDefinitionReaderUtils.generateBeanName(
             beanDefinition, this.readerContext.getRegistry(), true);
@@ -78,21 +71,11 @@ public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable Be
             aliases.add(beanClassName);
           }
         }
-        if (logger.isTraceEnabled()) {
-          logger.trace("Neither XML 'id' nor 'name' specified - " +
-                       "using generated bean name [" + beanName + "]");
-        }
-      }
-      catch (Exception ex) {
-        error(ex.getMessage(), ele);
-        return null;
-      }
     }
     String[] aliasesArray = StringUtils.toStringArray(aliases);
     //包装成BeanDefinitionHolder
     return new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray);//@1.2
   }
-
   return null;
 }
 ```
@@ -114,7 +97,6 @@ public AbstractBeanDefinition parseBeanDefinitionElement(Element ele, String bea
   if (ele.hasAttribute(PARENT_ATTRIBUTE)) {
     parent = ele.getAttribute(PARENT_ATTRIBUTE);
   }
-	//省略了try catch
   
   //创建一个GenericBeanDefinition
   AbstractBeanDefinition bd = createBeanDefinition(className, parent);

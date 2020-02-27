@@ -27,18 +27,14 @@ public class XmlBeanDefinitionTest {
 
 进入reader.loadBeanDefinitions(new ClassPathResource("xmlBeanDefinition.xml"))
 
-可以发现主要的逻辑在XmlBeanDefinitionReader.doLoadBeanDefinitions()方法中
+可以发现主要的逻辑在XmlBeanDefinitionReader.doLoadBeanDefinitions()方法中:(都已删减了异常捕获和日志打印等代码)
 
 ```java
-//省略异常捕获代码
 protected int doLoadBeanDefinitions(InputSource inputSource, Resource resource) throws BeanDefinitionStoreException {
   //将xml文件转化为Document对象
   Document doc = doLoadDocument(inputSource, resource);//@1
   //解析配置
   int count = registerBeanDefinitions(doc, resource);//@2
-  if (logger.isDebugEnabled()) {
-    logger.debug("Loaded " + count + " bean definitions from " + resource);
-  }
   return count;
 }
 ```
@@ -81,11 +77,7 @@ validationMode就是上述的dtd或者xsd，是xml验证的不同模式。在spr
 ```java
 public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
                              ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
-
   DocumentBuilderFactory factory = createDocumentBuilderFactory(validationMode, namespaceAware);
-  if (logger.isTraceEnabled()) {
-    logger.trace("Using JAXP provider [" + factory.getClass().getName() + "]");
-  }
   DocumentBuilder builder = createDocumentBuilder(factory, entityResolver, errorHandler);
   return builder.parse(inputSource);
 }
@@ -224,7 +216,7 @@ private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate deleg
 
 #### 2.1.2.解析自定义标签
 
-如果还不清楚如果在spring中使用自定义的标签，可以看下这篇：
+如果还不清楚如果在spring中使用自定义的标签，可以看下这篇：https://blog.csdn.net/yuxiuzhiai/article/details/104175364
 
 # 结语
 
