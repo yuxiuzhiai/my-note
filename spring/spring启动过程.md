@@ -56,6 +56,7 @@ public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySourc
   this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
   this.webApplicationType = WebApplicationType.deduceFromClasspath();
   //加载spring.factories中的ApplicationContextInitializer配置项
+  //关于spring boot中的这种SPI机制详情，请看https://blog.csdn.net/yuxiuzhiai/article/details/103480028
   setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
   //加载spring.factories中的ApplicationListener配置项
   setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
